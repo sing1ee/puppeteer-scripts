@@ -1,8 +1,7 @@
 FROM alekzonder/puppeteer:latest
 
 
-RUN mkdir /home/ibox \
-    && cd /home/ibox/ \ 
+RUN cd /app \ 
     && apt-get update \
     && apt-get install git -y \
     && git clone https://github.com/sing1ee/puppeteer-scripts.git \
