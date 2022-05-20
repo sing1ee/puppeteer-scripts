@@ -1,7 +1,7 @@
 FROM alekzonder/puppeteer:latest
 
 
-RUN && mkdir /home/ibox \
+RUN mkdir /home/ibox \
     && cd /home/ibox/ \ 
     && apt-get update \
     && apt-get install git -y \
