@@ -1,8 +1,7 @@
 FROM alekzonder/puppeteer:latest
 
 
-RUN mkdir -p /home/puppeteer/ \
-    && cd /home/puppeteer/ \ 
+RUN cd /home/puppeteer/ \ 
     && apt-get update \
     && apt-get install git -y \
     && git clone https://github.com/sing1ee/puppeteer-scripts.git \
