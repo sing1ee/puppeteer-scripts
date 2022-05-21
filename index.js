@@ -46,32 +46,35 @@ const getNotice = async function() {
         '--disable-setuid-sandbox'
     ]
   })
-  let page = await browser.newPage()
-  await page.goto('https://www.ibox.art/zh-cn/notice/')
-  await page.waitForSelector('.notice-wrapper')
-  let content = await page.content()
-  let $ = cheerio.load(content)
-  let noticeDiv = $(".notice-wrapper")
-  let maxID = await loadMaxID()
-  let newMaxID = 0
-  for (let i = 0; i < noticeDiv.length; i++) {
-    noticeURL = noticeDiv[i].attribs.href
-    let id = parseInt(await parseID(noticeURL), 10)
-    if (id > maxID) {
-      if (id > newMaxID) {
-        newMaxID = id
+  try {
+    let page = await browser.newPage()
+    await page.goto('https://www.ibox.art/zh-cn/notice/')
+    await page.waitForSelector('.notice-wrapper')
+    let content = await page.content()
+    let $ = cheerio.load(content)
+    let noticeDiv = $(".notice-wrapper")
+    let maxID = await loadMaxID()
+    let newMaxID = 0
+    for (let i = 0; i < noticeDiv.length; i++) {
+      noticeURL = noticeDiv[i].attribs.href
+      let id = parseInt(await parseID(noticeURL), 10)
+      if (id > maxID) {
+        if (id > newMaxID) {
+          newMaxID = id
+        }
+        let url = 'https://www.ibox.art/' + noticeURL
+        let title = $(noticeDiv[i]).find(".text")[0].children[0].data.trim()
+        let time = $(noticeDiv[i]).find(".time")[0].children[0].data.trim()
+        console.log(url, title, time)
+        await ding(url + '\n' + title + '\n' + time )
       }
-      let url = 'https://www.ibox.art/' + noticeURL
-      let title = $(noticeDiv[i]).find(".text")[0].children[0].data.trim()
-      let time = $(noticeDiv[i]).find(".time")[0].children[0].data.trim()
-      console.log(url, title, time)
-      await ding(url + '\n' + title + '\n' + time )
+      if (newMaxID > maxID) {
+        fs.writeFileSync(maxIDFile, newMaxID+'')
+      }
     }
-    if (newMaxID > maxID) {
-      fs.writeFileSync(maxIDFile, newMaxID+'')
-    }
+  } finally {
+    await browser.close()
   }
-  await browser.close()
 };
 
 (async () => {
