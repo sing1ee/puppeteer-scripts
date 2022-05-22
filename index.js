@@ -8,8 +8,15 @@ const maxIDFile = 'max_notice_id'
 const robot = new ChatBot({
   webhook: 'https://oapi.dingtalk.com/robot/send?access_token=4774d5ea0c7ab34a7d3baaf93372fd9dad31401161403acfbae9936cf8ea04cc'
 });
-function sleep (time) {
-  return new Promise((resolve) => setTimeout(resolve, time));
+
+
+process.on('unhandledRejection', error => {
+  console.error('unhandledRejection', error);
+  process.exit(1) // To exit with a 'failure' code
+});
+
+const sleep = async function(time) {
+  return new Promise((resolve) => setTimeout(resolve, time*1000));
 };
 function randomNum(minNum,maxNum){ 
   switch(arguments.length){ 
@@ -81,7 +88,8 @@ const getNotice = async function() {
   while(true) {
 
     await getNotice()
-    let sec = randomNum(1, 10)
+    let sec = randomNum(10, 60)
+    console.log("next work in: " + sec)
     await sleep(sec)
   }
 })()
